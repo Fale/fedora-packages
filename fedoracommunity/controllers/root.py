@@ -18,7 +18,7 @@
 
 from tg import expose, tmpl_context, redirect, flash, url, request, override_template, TGController
 
-import urllib
+import urllib2
 
 import moksha.common.utils
 from moksha.wsgi.ext.turbogears import global_resources
@@ -52,7 +52,7 @@ class RootController(BaseController):
                         getattr(resp, 'body', 'Not Found')))
 
     @expose('mako:fedoracommunity.templates.search')
-    def index(self, ec = None, **kwds):
+    def index(self, ec=None, **kwds):
         '''We show search page by default'''
         return self.s(**kwds)
 
@@ -66,13 +66,12 @@ class RootController(BaseController):
         else:
             search_str = kwds.get('search', '')
 
-        search_str = urllib.unquote_plus(search_str)
+        search_str = urllib2.unquote(search_str)
 
         tmpl_context.widget = XapianSearchGrid
         return {'title': 'Fedora Packages Search',
-                'options': {'id':'search_grid',
-                            'filters':{'search':search_str}}
-               }
+                'options': {'id': 'search_grid',
+                            'filters': {'search': search_str}}}
 
     @expose('mako:fedoracommunity.widgets.templates.widget_loader')
     def _w(self, widget_name, *args, **kwds):
